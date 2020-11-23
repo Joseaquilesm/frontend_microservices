@@ -1,0 +1,43 @@
+<mat-toolbar class="p-0 mat-elevation-z1">
+
+    <div fxLayout="row" style="width: 100%" fxLayoutAlign="space-between center">
+
+        <div fxLayout="row" fxLayoutAlign="start center">
+            <div class="logo ml-16">
+                <img class="logo-icon" src="assets/images/logos/photologo.svg">
+                <p class="p-4">Kompany</p>
+            </div>
+
+        </div>
+
+
+
+        <div class="" fxLayout="row" fxLayoutAlign="start center">
+
+            <button mat-button [matMenuTriggerFor]="userMenu"
+                    class="user-button">
+                <div fxLayout="row" fxLayoutAlign="center center">
+                    <img class="avatar mr-0 mr-sm-16" src="assets/images/avatars/Velazquez.jpg">
+                    <span class="username mr-12" fxHide fxShow.gt-sm>{{username}}</span>
+                    <mat-icon class="s-16" fxHide.xs>keyboard_arrow_down</mat-icon>
+                </div>
+            </button>
+
+            <mat-menu #userMenu="matMenu" [overlapTrigger]="false">
+
+                <button (click)="logout()" mat-menu-item class="">
+                    <mat-icon>exit_to_app</mat-icon>
+                    <span>Logout</span>
+                </button>
+
+            </mat-menu>
+
+            <div class="toolbar-separator"></div>
+
+
+
+        </div>
+
+    </div>
+
+</mat-toolbar>

@@ -1,0 +1,172 @@
+<div id="products" class="page-layout carded fullwidth inner-scroll">
+
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg accent" ></div>
+    <!-- / TOP BACKGROUND -->
+
+    <!-- CENTER -->
+    <div class="center">
+
+        <!-- HEADER -->
+        <div class="header accent"
+             fxLayout="column" fxLayoutAlign="center center"
+             fxLayout.gt-sm="row" fxLayoutAlign.gt-sm="space-between center">
+
+            <!-- APP TITLE -->
+            <div class="logo mb-24 mb-md-0"
+                 fxLayout="row" fxLayoutAlign="start center">
+                <mat-icon class="logo-icon s-32 mr-16" [@animate]="{value:'*',params:{delay:'50ms',scale:'0.2'}}">
+                    shopping_basket
+                </mat-icon>
+                <span class="logo-text h1" [@animate]="{value:'*',params:{delay:'100ms',x:'-25px'}}">
+                    Media Packages
+                </span>
+            </div>
+            <!-- / APP TITLE -->
+
+            <!-- SEARCH -->
+            <div class="search-wrapper mx-32 mx-md-0">
+                <div class="search" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                    <mat-icon>search</mat-icon>
+                    <input #filter placeholder="Search for a product">
+                </div>
+            </div>
+            <!-- / SEARCH -->
+
+
+        </div>
+        <!-- / HEADER -->
+
+        <!-- CONTENT CARD -->
+        <div *ngIf="!order" style="align-self: center; width: 70%" class="content-card" >
+
+            <mat-table *ngIf="priv === 'c'" class="products-table"
+                       #table [dataSource]="dataSource"
+                       matSort
+                       [@animateStagger]="{value:'50'}"
+                       fusePerfectScrollbar>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.name}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Price Column -->
+                <ng-container matColumnDef="price">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Price</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                        <p class="price text-truncate">
+                            {{product.priceTaxIncl | currency:'USD':'symbol'}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+
+                <!-- Active Column -->
+                <ng-container matColumnDef="active">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Active</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                        <mat-icon *ngIf="product.active" class="active-icon green-600 s-16">check</mat-icon>
+                        <mat-icon *ngIf="!product.active" class="active-icon red-500 s-16">close</mat-icon>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Order Column -->
+                <ng-container matColumnDef="order">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Order</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                        <button (click)="openPaypalModal(product)" mat-button >
+                            <mat-icon>add_shopping_cart</mat-icon> Order
+                        </button>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+
+                <mat-row *matRowDef="let product; columns: displayedColumns;"
+                         class="product"
+                         matRipple
+                         [routerLink]="'/apps/e-commerce/products/'+product.id+'/'+product.handle">
+                </mat-row>
+
+            </mat-table>
+
+            <mat-table *ngIf="priv === 'u'" class="products-table"
+                        #table [dataSource]="dataSource"
+                        matSort
+                        [@animateStagger]="{value:'50'}"
+                        fusePerfectScrollbar>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
+                    <mat-cell *matCellDef="let product">
+                        <p class="text-truncate">{{product.purchase_units[0].description}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Price Column -->
+                <ng-container matColumnDef="price">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Price</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                        <p class="price text-truncate">
+                            {{product.purchase_units[0].amount.value | currency:'USD':'symbol'}}
+                        </p>
+                    </mat-cell>
+                </ng-container>
+
+
+                <!-- Order Column -->
+                <ng-container matColumnDef="client">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Name</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                        <p class="text-truncate">{{product.payer.name.given_name + ' ' + product.payer.name.surname}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <!-- Order Column -->
+                <ng-container matColumnDef="clientEmail">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header fxHide fxShow.gt-xs>Email</mat-header-cell>
+                    <mat-cell *matCellDef="let product" fxHide fxShow.gt-xs>
+                        <p class="text-truncate">{{product.payer.email_address}}</p>
+                    </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="displayedColumnsOrders; sticky:true"></mat-header-row>
+
+                <mat-row *matRowDef="let product; columns: displayedColumnsOrders;"
+                         class="product"
+                         matRipple>
+                </mat-row>
+
+            </mat-table>
+
+        </div>
+
+        <div class="p-16" fxLayout="column" *ngIf="order">
+
+            <div fxLayout="row" fxLayoutAlign="start">
+
+                <h2>Order Summary</h2>
+
+            </div>
+
+            <div fxLayout="row" fxLayoutAlign="start">
+
+                <div>You purchased:  {{order.purchase_units[0].description}}</div>
+
+                <div class="ml-8">${{order.purchase_units[0].amount.value}}</div>
+
+
+            </div>
+
+            <button fxFlexAlign="center" (click)="order = null" mat-flat-button>OK</button>
+
+        </div>
+        <!-- / CONTENT CARD -->
+    </div>
+    <!-- / CENTER -->
+</div>
